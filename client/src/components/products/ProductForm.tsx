@@ -50,18 +50,18 @@ export function ProductForm({ productId, onSaved, onCancel }: ProductFormProps) 
   useEffect(() => {
     if (product) {
       form.reset({
-        name: product.name,
-        sku: product.sku,
+        name: product.name || "",
+        sku: product.sku || "",
         barcode: product.barcode || "",
         description: product.description || "",
         categoryId: product.categoryId || "",
         supplierId: product.supplierId || "",
-        costPrice: product.costPrice,
-        sellingPrice: product.sellingPrice,
-        quantity: product.quantity,
-        minStockLevel: product.minStockLevel,
-        trackStock: product.trackStock,
-        isActive: product.isActive,
+        costPrice: product.costPrice || "0",
+        sellingPrice: product.sellingPrice || "0",
+        quantity: product.quantity || 0,
+        minStockLevel: product.minStockLevel || 10,
+        trackStock: product.trackStock ?? true,
+        isActive: product.isActive ?? true,
         imageUrl: product.imageUrl || "",
       });
     }
@@ -167,7 +167,7 @@ export function ProductForm({ productId, onSaved, onCancel }: ProductFormProps) 
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select onValueChange={field.onChange} value={field.value || ""}>
                   <FormControl>
                     <SelectTrigger data-testid="select-product-category">
                       <SelectValue placeholder="Select category" />
@@ -192,7 +192,7 @@ export function ProductForm({ productId, onSaved, onCancel }: ProductFormProps) 
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Supplier</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select onValueChange={field.onChange} value={field.value || ""}>
                   <FormControl>
                     <SelectTrigger data-testid="select-product-supplier">
                       <SelectValue placeholder="Select supplier" />
