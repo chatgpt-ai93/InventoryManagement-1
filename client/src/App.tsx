@@ -9,6 +9,7 @@ import Layout from "@/components/Layout";
 import Dashboard from "@/pages/dashboard";
 import POS from "@/pages/pos";
 import Products from "@/pages/products";
+import Categories from "@/pages/categories";
 import Inventory from "@/pages/inventory";
 import Customers from "@/pages/customers";
 import Suppliers from "@/pages/suppliers";
@@ -51,6 +52,11 @@ function Router() {
       <Route path="/products">
         <ProtectedRoute>
           <Products />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/categories">
+        <ProtectedRoute>
+          <Categories />
         </ProtectedRoute>
       </Route>
       <Route path="/inventory">

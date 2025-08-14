@@ -134,6 +134,33 @@ export function useCreateCategory() {
   });
 }
 
+export function useUpdateCategory() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({ id, ...category }: { id: string } & Partial<InsertCategory>): Promise<Category> => {
+      const response = await apiRequest("PUT", `/api/categories/${id}`, category);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+    },
+  });
+}
+
+export function useDeleteCategory() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (id: string): Promise<void> => {
+      await apiRequest("DELETE", `/api/categories/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+    },
+  });
+}
+
 // Suppliers API
 export function useSuppliers() {
   return useQuery<Supplier[]>({
@@ -148,6 +175,33 @@ export function useCreateSupplier() {
     mutationFn: async (supplier: InsertSupplier): Promise<Supplier> => {
       const response = await apiRequest("POST", "/api/suppliers", supplier);
       return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/suppliers"] });
+    },
+  });
+}
+
+export function useUpdateSupplier() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({ id, ...supplier }: { id: string } & Partial<InsertSupplier>): Promise<Supplier> => {
+      const response = await apiRequest("PUT", `/api/suppliers/${id}`, supplier);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/suppliers"] });
+    },
+  });
+}
+
+export function useDeleteSupplier() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (id: string): Promise<void> => {
+      await apiRequest("DELETE", `/api/suppliers/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/suppliers"] });
