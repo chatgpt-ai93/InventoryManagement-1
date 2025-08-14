@@ -1,0 +1,62 @@
+You are an expert full-stack developer specializing in business software, retail POS systems, inventory management, and analytics dashboards.
+Your task is to develop a complete Inventory Management System with POS using React (frontend), Node.js + Express (backend), and MySQL/PostgreSQL (database), with a modern UI, modular code structure, and best practices for security and scalability.
+
+### Key Requirements
+
+1. Core Features
+   - Product Management: Create, read, update, delete products with SKU, barcode, category, supplier, cost, price, quantity, track-stock flag, product images.
+   - Category Management: CRUD for categories with slug and description.
+   - Supplier Management: CRUD suppliers with contact info and address.
+   - Customer Management: CRUD customers with loyalty points tracking.
+   - Stock Management: Multiple warehouse support, stock adjustments, transfers.
+   - Purchases: Record purchase orders, mark as received, auto-update stock.
+   - Sales (POS): Add items by barcode or search, apply discounts, taxes, multiple payment methods (cash, card, bank transfer, etc.), hold/resume sales, print receipts.
+   - Returns/Refunds: Process item returns with reason logging and stock updates.
+   - Low Stock Alerts: Automatic alerts for products below a defined threshold.
+
+2. Reports & Dashboard Analytics
+   Create a visually rich dashboard that includes:
+   - Today's Report: Total sales, number of transactions, top products, total profit.
+   - 1 Week Report: Sales trend graph, average daily sales, top categories.
+   - 1 Month Report: Revenue, profit, stock turnover rate.
+   - 6 Months Report: Seasonal trend analysis, repeat customers rate.
+   - 1 Year Report: Annual revenue, gross profit, yearly best-selling products.
+   - Last Year Comparison: Show % increase or decrease in revenue and sales count.
+   - Low Quantity Alert: List of products nearing out-of-stock.
+   - Hero Product: Product with highest sales quantity/value in selected period.
+   - Slow Movers: Products with least sales.
+   - Profit Margin Report: Overall and per-product margin analysis.
+   - Customer Insights: Top customers by spending.
+
+3. UI/UX & Tech Stack
+   - Frontend: React (with functional components & hooks), Tailwind CSS for styling, Chart.js/Recharts for graphs, Axios for API calls, React Router for navigation.
+   - Backend: Node.js + Express.js REST API, JWT authentication, bcrypt for password hashing, role-based access (Admin, Cashier, Manager), validation with Joi/Yup.
+   - Database: MySQL or PostgreSQL with Sequelize ORM.
+   - Deployment Ready: Environment variables for configs, API error handling, CORS enabled.
+   - POS Screen: Optimized for touchscreen, barcode scanner support, real-time cart updates.
+
+4. Extra Business-Helpful Features
+   - Stock Audit Log: Track every stock movement with reason and reference.
+   - Multi-Warehouse & Branch Support: Sales & stock per branch.
+   - Export Reports: CSV, PDF export for any report view.
+   - Role Management: Define custom roles and permissions.
+   - Dark Mode Toggle: Save preference in local storage.
+   - Offline Mode for POS: Cache last synced products for offline sales, sync later.
+
+5. Deliverables
+   - Full React frontend project (structured with components, pages, services).
+   - Full Node.js backend project with routes, controllers, services, and models.
+   - Database schema & migration files.
+   - API documentation (OpenAPI/Swagger).
+   - Seed data for products, categories, suppliers, and demo transactions.
+   - Unit & integration tests for backend APIs and frontend components.
+
+Make the code clean, modular, and production-ready with comments explaining major logic.
+Use async/await, avoid callback hell, and ensure database queries are optimized.
+
+For the dashboard, use charts, tables, and cards to visualize metrics. Each report should be filterable by date range and exportable.
+POS screen should be fast and keyboard-friendly for cashiers.
+
+Ensure responsive design so it works well on desktop, tablet, and mobile.
+
+Now generate the entire project code for both frontend and backend, with the file structure clearly explained before showing the code.
