@@ -12,17 +12,17 @@ import { Plus, Download, Search } from "lucide-react";
 
 export default function Products() {
   const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<string>("");
-  const [supplierFilter, setSupplierFilter] = useState<string>("");
-  const [stockFilter, setStockFilter] = useState<string>("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [supplierFilter, setSupplierFilter] = useState<string>("all");
+  const [stockFilter, setStockFilter] = useState<string>("all");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
 
   const filters = {
     search: search || undefined,
-    category: categoryFilter || undefined,
-    supplier: supplierFilter || undefined,
-    stock_status: stockFilter || undefined,
+    category: categoryFilter !== "all" ? categoryFilter : undefined,
+    supplier: supplierFilter !== "all" ? supplierFilter : undefined,
+    stock_status: stockFilter !== "all" ? stockFilter : undefined,
   };
 
   const { data: products = [], isLoading, refetch } = useProducts(filters);
@@ -126,7 +126,7 @@ export default function Products() {
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Categories</SelectItem>
+                  <SelectItem value="all">All Categories</SelectItem>
                   {categories.map((category) => (
                     <SelectItem key={category.id} value={category.id}>
                       {category.name}
@@ -141,7 +141,7 @@ export default function Products() {
                   <SelectValue placeholder="All Stock" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Stock</SelectItem>
+                  <SelectItem value="all">All Stock</SelectItem>
                   <SelectItem value="low">Low Stock</SelectItem>
                   <SelectItem value="out">Out of Stock</SelectItem>
                 </SelectContent>
@@ -153,7 +153,7 @@ export default function Products() {
                   <SelectValue placeholder="All Suppliers" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Suppliers</SelectItem>
+                  <SelectItem value="all">All Suppliers</SelectItem>
                   {suppliers.map((supplier) => (
                     <SelectItem key={supplier.id} value={supplier.id}>
                       {supplier.name}
