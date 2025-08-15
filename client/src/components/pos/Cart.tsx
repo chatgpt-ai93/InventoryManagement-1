@@ -144,7 +144,7 @@ export function Cart({
                     {formatCurrency(item.unitPrice)} each
                   </p>
                 </div>
-                
+
                 <div className="flex items-center space-x-2 ml-3">
                   <Button
                     variant="outline"
@@ -155,11 +155,11 @@ export function Cart({
                   >
                     <Minus className="h-3 w-3" />
                   </Button>
-                  
+
                   <span className="w-8 text-center font-medium text-sm">
                     {item.quantity}
                   </span>
-                  
+
                   <Button
                     variant="outline"
                     size="icon"
@@ -169,7 +169,7 @@ export function Cart({
                   >
                     <Plus className="h-3 w-3" />
                   </Button>
-                  
+
                   <Button
                     variant="ghost"
                     size="icon"
@@ -180,7 +180,7 @@ export function Cart({
                     <Trash2 className="h-3 w-3" />
                   </Button>
                 </div>
-                
+
                 <div className="text-right ml-3">
                   <p className="font-semibold text-foreground text-sm">
                     {formatCurrency(item.totalPrice)}
@@ -265,7 +265,7 @@ export function Cart({
                 <Check className="mr-2 h-5 w-5" />
                 {createSale.isPending ? "Processing..." : `Complete Sale - ${formatCurrency(total)}`}
               </Button>
-              
+
               <div className="grid grid-cols-2 gap-3">
                 <Button
                   variant="outline"

@@ -431,12 +431,32 @@ export class DatabaseStorage implements IStorage {
     const result = await db.insert(sales).values(insertSale).returning();
     const sale = result[0];
     
-    // Insert sale items
+    // Insert sale items and update stock
     for (const item of items) {
+      // Insert sale item
       await db.insert(saleItems).values({
         ...item,
         saleId: sale.id,
       });
+      
+      // Update product stock
+      const product = await this.getProduct(item.productId);
+      if (product && product.trackStock) {
+        const newQuantity = product.quantity - item.quantity;
+        await db.update(products)
+          .set({ quantity: newQuantity })
+          .where(eq(products.id, item.productId));
+        
+        // Create stock movement record
+        await db.insert(stockMovements).values({
+          productId: item.productId,
+          movementType: 'sale',
+          quantity: -item.quantity,
+          reason: 'Sale transaction',
+          reference: sale.id,
+          userId: insertSale.userId,
+        });
+      }
     }
     
     return sale;
