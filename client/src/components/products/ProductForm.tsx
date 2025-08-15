@@ -176,7 +176,7 @@ export function ProductForm({ productId, onSaved, onCancel }: ProductFormProps) 
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value || ""}>
+                <Select onValueChange={field.onChange} value={field.value || undefined}>
                   <FormControl>
                     <SelectTrigger data-testid="select-product-category">
                       <SelectValue placeholder="Select category" />
@@ -184,7 +184,7 @@ export function ProductForm({ productId, onSaved, onCancel }: ProductFormProps) 
                   </FormControl>
                   <SelectContent>
                     {categories.map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
+                      <SelectItem key={category.id} value={category.id || "none"}>
                         {category.name}
                       </SelectItem>
                     ))}
@@ -201,7 +201,7 @@ export function ProductForm({ productId, onSaved, onCancel }: ProductFormProps) 
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Supplier</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value || ""}>
+                <Select onValueChange={field.onChange} value={field.value || undefined}>
                   <FormControl>
                     <SelectTrigger data-testid="select-product-supplier">
                       <SelectValue placeholder="Select supplier" />
@@ -209,7 +209,7 @@ export function ProductForm({ productId, onSaved, onCancel }: ProductFormProps) 
                   </FormControl>
                   <SelectContent>
                     {suppliers.map((supplier) => (
-                      <SelectItem key={supplier.id} value={supplier.id}>
+                      <SelectItem key={supplier.id} value={supplier.id || "none"}>
                         {supplier.name}
                       </SelectItem>
                     ))}

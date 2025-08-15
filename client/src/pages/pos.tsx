@@ -30,8 +30,12 @@ export default function POS() {
   ];
 
   const addToCart = (productId: string) => {
+    console.log("Adding to cart:", productId);
     const product = products.find(p => p.id === productId);
-    if (!product) return;
+    if (!product) {
+      console.log("Product not found:", productId);
+      return;
+    }
 
     const existingItem = cart.find(item => item.productId === productId);
     if (existingItem) {
@@ -48,6 +52,7 @@ export default function POS() {
         unitPrice: parseFloat(product.sellingPrice),
         totalPrice: parseFloat(product.sellingPrice),
       };
+      console.log("New cart item:", newItem);
       setCart([...cart, newItem]);
     }
   };
