@@ -73,6 +73,7 @@ export function ProductForm({ productId, onSaved, onCancel }: ProductFormProps) 
       const cleanedValues = {
         ...values,
         barcode: values.barcode || null,
+        categoryId: values.categoryId || null,
         supplierId: values.supplierId || null,
         imageUrl: values.imageUrl || null,
       };
