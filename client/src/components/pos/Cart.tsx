@@ -60,10 +60,10 @@ export function Cart({
     try {
       const saleData = {
         customerId: selectedCustomer && selectedCustomer !== "walk-in" ? selectedCustomer : null,
-        subtotal: subtotal.toFixed(2),
-        taxAmount: taxAmount.toFixed(2),
-        discountAmount: "0.00",
-        total: total.toFixed(2),
+        subtotal: subtotal.toString(),
+        taxAmount: taxAmount.toString(),
+        discountAmount: "0",
+        total: total.toString(),
         paymentMethod,
         status: "completed" as const,
       };
@@ -71,8 +71,8 @@ export function Cart({
       const saleItems = items.map(item => ({
         productId: item.productId,
         quantity: item.quantity,
-        unitPrice: item.unitPrice.toFixed(2),
-        totalPrice: item.totalPrice.toFixed(2),
+        unitPrice: item.unitPrice.toString(),
+        totalPrice: item.totalPrice.toString(),
       }));
 
       await createSale.mutateAsync({ sale: saleData, items: saleItems });

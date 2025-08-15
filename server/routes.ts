@@ -439,6 +439,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/sales", authenticateToken, async (req, res) => {
     try {
       const { sale, items } = req.body;
+      console.log("Sale creation request:", { sale, items });
       
       // Generate invoice number
       const invoiceNumber = `INV-${Date.now()}`;
@@ -448,13 +449,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         invoiceNumber,
         userId: req.user.id,
       });
+      console.log("Parsed sale data:", saleData);
       
       const saleItems = items.map((item: any) => insertSaleItemSchema.parse(item));
+      console.log("Parsed sale items:", saleItems);
       
       const createdSale = await storage.createSale(saleData, saleItems);
       res.status(201).json(createdSale);
     } catch (error) {
-      res.status(400).json({ message: "Failed to create sale", error: error.message });
+      console.error("Sale creation error:", error);
+      if (error.errors) {
+        console.error("Validation errors:", error.errors);
+      }
+      res.status(400).json({ 
+        message: "Failed to create sale", 
+        error: error.message,
+        details: error.errors || null 
+      });
     }
   });
 
