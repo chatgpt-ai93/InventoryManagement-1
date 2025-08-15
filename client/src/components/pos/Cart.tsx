@@ -59,7 +59,7 @@ export function Cart({
 
     try {
       const saleData = {
-        customerId: selectedCustomer || null,
+        customerId: selectedCustomer && selectedCustomer !== "walk-in" ? selectedCustomer : null,
         subtotal: subtotal.toFixed(2),
         taxAmount: taxAmount.toFixed(2),
         discountAmount: "0.00",
@@ -215,14 +215,14 @@ export function Cart({
                 <Label className="text-sm font-medium text-muted-foreground mb-2 block">
                   Customer
                 </Label>
-                <Select value={selectedCustomer || ""} onValueChange={onCustomerChange}>
+                <Select value={selectedCustomer || undefined} onValueChange={onCustomerChange}>
                   <SelectTrigger data-testid="select-customer">
                     <SelectValue placeholder="Walk-in Customer" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Walk-in Customer</SelectItem>
+                    <SelectItem value="walk-in">Walk-in Customer</SelectItem>
                     {customers.map((customer) => (
-                      <SelectItem key={customer.id} value={customer.id}>
+                      <SelectItem key={customer.id} value={customer.id || "none"}>
                         {customer.name} {parseFloat(customer.totalSpent) > 1000 && "(VIP)"}
                       </SelectItem>
                     ))}
