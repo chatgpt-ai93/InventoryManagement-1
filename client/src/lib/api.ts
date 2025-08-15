@@ -33,9 +33,16 @@ export function useProducts(filters?: {
   supplier?: string;
   stock_status?: string;
 }) {
-  const params = new URLSearchParams(filters as Record<string, string>);
+  // Filter out undefined values to avoid malformed query parameters
+  const cleanFilters = filters ? Object.fromEntries(
+    Object.entries(filters).filter(([_, value]) => value !== undefined && value !== "")
+  ) : {};
+  
+  const params = new URLSearchParams(cleanFilters);
+  const queryString = params.toString();
+  
   return useQuery<ProductWithDetails[]>({
-    queryKey: ["/api/products", params.toString()],
+    queryKey: ["/api/products", queryString],
   });
 }
 
@@ -212,8 +219,9 @@ export function useDeleteSupplier() {
 // Customers API
 export function useCustomers(search?: string) {
   const params = search ? new URLSearchParams({ search }) : new URLSearchParams();
+  const queryString = params.toString();
   return useQuery<Customer[]>({
-    queryKey: ["/api/customers", params.toString()],
+    queryKey: ["/api/customers", queryString],
   });
 }
 
@@ -237,9 +245,14 @@ export function useSales(filters?: {
   end_date?: string;
   customer_id?: string;
 }) {
-  const params = new URLSearchParams(filters as Record<string, string>);
+  const cleanFilters = filters ? Object.fromEntries(
+    Object.entries(filters).filter(([_, value]) => value !== undefined && value !== "")
+  ) : {};
+  
+  const params = new URLSearchParams(cleanFilters);
+  const queryString = params.toString();
   return useQuery<SaleWithDetails[]>({
-    queryKey: ["/api/sales", params.toString()],
+    queryKey: ["/api/sales", queryString],
   });
 }
 
