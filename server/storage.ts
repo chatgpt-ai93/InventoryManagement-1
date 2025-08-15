@@ -574,12 +574,32 @@ export class DatabaseStorage implements IStorage {
     const totalCustomers = await db.select({ count: sql<number>`count(*)` }).from(customers);
     const totalSales = await db.select({ sum: sql<number>`sum(CAST(${sales.total} AS DECIMAL))` }).from(sales);
     
+    // Get today's date range
+    const today = new Date();
+    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    
+    // Get today's sales
+    const todaySales = await db
+      .select({ sum: sql<number>`sum(CAST(${sales.total} AS DECIMAL))`, count: sql<number>`count(*)` })
+      .from(sales)
+      .where(and(gte(sales.createdAt, startOfDay), lte(sales.createdAt, endOfDay)));
+    
+    const lowStockCount = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(products)
+      .where(sql`${products.quantity} <= ${products.minStockLevel}`);
+    
     return {
       totalProducts: totalProducts[0]?.count || 0,
       totalCategories: totalCategories[0]?.count || 0,
       totalCustomers: totalCustomers[0]?.count || 0,
-      totalRevenue: totalSales[0]?.sum || 0,
-      lowStockItems: 0, // Will calculate separately
+      totalRevenue: Number(totalSales[0]?.sum) || 0,
+      lowStockItems: lowStockCount[0]?.count || 0,
+      todaySales: Number(todaySales[0]?.sum) || 0,
+      todayTransactions: todaySales[0]?.count || 0,
+      salesGrowth: 0, // Default to 0 for now
+      transactionGrowth: 0, // Default to 0 for now
     };
   }
 

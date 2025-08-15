@@ -234,14 +234,15 @@ export type SaleWithDetails = Sale & {
 };
 
 export type DashboardMetrics = {
+  totalProducts: number;
+  totalCategories: number;
+  totalCustomers: number;
+  totalRevenue: number;
+  lowStockItems: number;
   todaySales: number;
   todayTransactions: number;
-  totalProducts: number;
-  lowStockCount: number;
-  totalCustomers: number;
   salesGrowth: number;
   transactionGrowth: number;
-  customerGrowth: number;
 };
 
 export type CartItem = {

@@ -47,7 +47,8 @@ export default function Dashboard() {
     }).format(amount);
   };
 
-  const formatPercentage = (percentage: number) => {
+  const formatPercentage = (percentage: number | undefined) => {
+    if (!percentage && percentage !== 0) return '+0.0%';
     return `${percentage > 0 ? '+' : ''}${percentage.toFixed(1)}%`;
   };
 
@@ -65,7 +66,7 @@ export default function Dashboard() {
                 </p>
                 <p className="text-sm text-success flex items-center mt-1">
                   <ArrowUp className="mr-1 h-3 w-3" />
-                  {metrics ? formatPercentage(metrics.salesGrowth) : '+0%'} from yesterday
+                  {formatPercentage(metrics?.salesGrowth)} from yesterday
                 </p>
               </div>
               <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
@@ -85,7 +86,7 @@ export default function Dashboard() {
                 </p>
                 <p className="text-sm text-primary flex items-center mt-1">
                   <ArrowUp className="mr-1 h-3 w-3" />
-                  {metrics ? formatPercentage(metrics.transactionGrowth) : '+0%'} from yesterday
+                  {formatPercentage(metrics?.transactionGrowth)} from yesterday
                 </p>
               </div>
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
