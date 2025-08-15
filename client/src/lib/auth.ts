@@ -17,6 +17,7 @@ export function useAuth() {
     queryKey: ["/api/auth/me"],
     retry: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    enabled: !!localStorage.getItem("auth-token"), // Only query if token exists
   });
 
   return { user, isLoading, error };
