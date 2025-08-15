@@ -274,7 +274,11 @@ export class DatabaseStorage implements IStorage {
       .leftJoin(categories, eq(products.categoryId, categories.id))
       .leftJoin(suppliers, eq(products.supplierId, suppliers.id));
     
-    return result as ProductWithDetails[];
+    return result.map(row => ({
+      ...row,
+      category: row.category ? { name: row.category } : undefined,
+      supplier: row.supplier ? { name: row.supplier } : undefined
+    })) as ProductWithDetails[];
   }
 
   async searchProducts(query: string): Promise<ProductWithDetails[]> {
@@ -304,7 +308,11 @@ export class DatabaseStorage implements IStorage {
       .leftJoin(suppliers, eq(products.supplierId, suppliers.id))
       .where(like(products.name, `%${query}%`));
     
-    return result as ProductWithDetails[];
+    return result.map(row => ({
+      ...row,
+      category: row.category ? { name: row.category } : undefined,
+      supplier: row.supplier ? { name: row.supplier } : undefined
+    })) as ProductWithDetails[];
   }
 
   async getLowStockProducts(): Promise<ProductWithDetails[]> {
@@ -334,7 +342,11 @@ export class DatabaseStorage implements IStorage {
       .leftJoin(suppliers, eq(products.supplierId, suppliers.id))
       .where(sql`${products.quantity} <= ${products.minStockLevel}`);
     
-    return result as ProductWithDetails[];
+    return result.map(row => ({
+      ...row,
+      category: row.category ? { name: row.category } : undefined,
+      supplier: row.supplier ? { name: row.supplier } : undefined
+    })) as ProductWithDetails[];
   }
 
   async updateProductStock(id: string, quantity: number, movementType: string, reason?: string, userId?: string): Promise<boolean> {
