@@ -93,6 +93,102 @@ export function Cart({
     }
   };
 
+  const handlePrintReceipt = () => {
+    if (items.length === 0) {
+      toast({
+        title: "Cannot print",
+        description: "No items in cart to print",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Generate receipt content
+    const receiptContent = `
+      <div style="width: 300px; font-family: monospace; padding: 20px;">
+        <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
+          <h2 style="margin: 0;">RetailFlow POS</h2>
+          <p style="margin: 5px 0;">Receipt</p>
+          <p style="margin: 5px 0;">${new Date().toLocaleString()}</p>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+          <p style="margin: 5px 0;"><strong>Customer:</strong> ${
+            selectedCustomer && selectedCustomer !== "walk-in" 
+              ? customers.find(c => c.id === selectedCustomer)?.name || "Walk-in Customer"
+              : "Walk-in Customer"
+          }</p>
+          <p style="margin: 5px 0;"><strong>Payment:</strong> ${paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1)}</p>
+        </div>
+
+        <div style="border-bottom: 1px solid #ccc; padding-bottom: 10px; margin-bottom: 10px;">
+          ${items.map(item => `
+            <div style="display: flex; justify-content: space-between; margin: 5px 0;">
+              <div style="flex: 1;">
+                <div style="font-weight: bold;">${item.product.name}</div>
+                <div style="font-size: 12px;">${item.quantity} x ${formatCurrency(item.unitPrice)}</div>
+              </div>
+              <div style="text-align: right; font-weight: bold;">
+                ${formatCurrency(item.totalPrice)}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div style="margin-top: 15px;">
+          <div style="display: flex; justify-content: space-between; margin: 5px 0;">
+            <span>Subtotal:</span>
+            <span>${formatCurrency(subtotal)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin: 5px 0;">
+            <span>Tax (8.5%):</span>
+            <span>${formatCurrency(taxAmount)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin: 10px 0; font-weight: bold; font-size: 18px; border-top: 2px solid #000; padding-top: 10px;">
+            <span>Total:</span>
+            <span>${formatCurrency(total)}</span>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px; border-top: 1px solid #ccc; padding-top: 15px;">
+          <p style="margin: 5px 0; font-size: 12px;">Thank you for your business!</p>
+          <p style="margin: 5px 0; font-size: 12px;">Invoice: INV-${Date.now()}</p>
+        </div>
+      </div>
+    `;
+
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank', 'width=400,height=600');
+    if (printWindow) {
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Receipt</title>
+            <style>
+              body { margin: 0; padding: 0; }
+              @media print {
+                body { margin: 0; }
+                @page { margin: 0.5in; }
+              }
+            </style>
+          </head>
+          <body>
+            ${receiptContent}
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+    } else {
+      toast({
+        title: "Print failed",
+        description: "Could not open print window. Please check popup blocker settings.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const paymentMethods = [
     { id: "cash", name: "Cash", icon: Banknote },
     { id: "card", name: "Card", icon: CreditCard },
@@ -283,6 +379,7 @@ export function Cart({
                 <Button
                   variant="outline"
                   className="h-11 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white border-0 shadow-md hover:shadow-lg transition-all duration-200 font-medium"
+                  onClick={handlePrintReceipt}
                   data-testid="button-print-receipt"
                 >
                   <Printer className="mr-2 h-4 w-4" />
