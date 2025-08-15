@@ -111,7 +111,7 @@ export function Cart({
             variant="ghost"
             size="sm"
             onClick={onClearCart}
-            className="text-destructive hover:text-destructive"
+            className="text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-200 font-medium"
             data-testid="button-clear-cart"
           >
             <Trash2 className="mr-1 h-4 w-4" />
@@ -149,21 +149,21 @@ export function Cart({
                   <Button
                     variant="outline"
                     size="icon"
-                    className="h-8 w-8"
+                    className="h-8 w-8 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all duration-200"
                     onClick={() => onUpdateQuantity(item.productId, -1)}
                     data-testid={`button-decrease-${item.productId}`}
                   >
                     <Minus className="h-3 w-3" />
                   </Button>
 
-                  <span className="w-8 text-center font-medium text-sm">
+                  <span className="w-10 text-center font-semibold text-sm bg-muted/50 rounded px-2 py-1">
                     {item.quantity}
                   </span>
 
                   <Button
                     variant="outline"
                     size="icon"
-                    className="h-8 w-8"
+                    className="h-8 w-8 hover:bg-green-50 hover:border-green-200 hover:text-green-600 transition-all duration-200"
                     onClick={() => onUpdateQuantity(item.productId, 1)}
                     data-testid={`button-increase-${item.productId}`}
                   >
@@ -173,7 +173,7 @@ export function Cart({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-destructive hover:text-destructive ml-2"
+                    className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50 ml-2 transition-all duration-200"
                     onClick={() => onRemoveItem(item.productId)}
                     data-testid={`button-remove-${item.productId}`}
                   >
@@ -237,16 +237,21 @@ export function Cart({
                 <div className="grid grid-cols-3 gap-2">
                   {paymentMethods.map((method) => {
                     const Icon = method.icon;
+                    const isSelected = paymentMethod === method.id;
                     return (
                       <Button
                         key={method.id}
-                        variant={paymentMethod === method.id ? "default" : "outline"}
-                        className="flex flex-col items-center p-3 h-auto"
+                        variant="outline"
+                        className={`flex flex-col items-center p-4 h-auto transition-all duration-200 ${
+                          isSelected 
+                            ? "bg-gradient-to-b from-primary to-primary/80 text-primary-foreground border-primary shadow-lg transform scale-105" 
+                            : "hover:bg-gradient-to-b hover:from-muted/50 hover:to-muted hover:scale-102 hover:shadow-md"
+                        }`}
                         onClick={() => onPaymentMethodChange(method.id)}
                         data-testid={`button-payment-${method.id}`}
                       >
-                        <Icon className="h-4 w-4 mb-1" />
-                        <span className="text-xs">{method.name}</span>
+                        <Icon className="h-5 w-5 mb-2" />
+                        <span className="text-xs font-medium">{method.name}</span>
                       </Button>
                     );
                   })}
@@ -257,29 +262,30 @@ export function Cart({
             {/* Action Buttons */}
             <div className="space-y-3">
               <Button
-                className="w-full h-12 text-base font-semibold bg-success hover:bg-success/90"
+                className="w-full h-14 text-lg font-bold bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                 onClick={handleCompleteSale}
                 disabled={createSale.isPending}
                 data-testid="button-complete-sale"
               >
-                <Check className="mr-2 h-5 w-5" />
+                <Check className="mr-3 h-6 w-6" />
                 {createSale.isPending ? "Processing..." : `Complete Sale - ${formatCurrency(total)}`}
               </Button>
 
               <div className="grid grid-cols-2 gap-3">
                 <Button
                   variant="outline"
-                  className="bg-warning hover:bg-warning/90 text-warning-foreground"
+                  className="h-11 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white border-0 shadow-md hover:shadow-lg transition-all duration-200 font-medium"
                   data-testid="button-hold-sale"
                 >
-                  <Pause className="mr-1 h-4 w-4" />
+                  <Pause className="mr-2 h-4 w-4" />
                   Hold
                 </Button>
                 <Button
                   variant="outline"
+                  className="h-11 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white border-0 shadow-md hover:shadow-lg transition-all duration-200 font-medium"
                   data-testid="button-print-receipt"
                 >
-                  <Printer className="mr-1 h-4 w-4" />
+                  <Printer className="mr-2 h-4 w-4" />
                   Print
                 </Button>
               </div>

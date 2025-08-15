@@ -451,7 +451,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       console.log("Parsed sale data:", saleData);
       
-      const saleItems = items.map((item: any) => insertSaleItemSchema.parse(item));
+      const saleItems = items.map((item: any) => insertSaleItemSchema.omit({ saleId: true }).parse(item));
       console.log("Parsed sale items:", saleItems);
       
       const createdSale = await storage.createSale(saleData, saleItems);
