@@ -69,14 +69,22 @@ export function ProductForm({ productId, onSaved, onCancel }: ProductFormProps) 
 
   const onSubmit = async (values: InsertProduct) => {
     try {
+      // Clean up the data - convert empty strings to null for optional fields
+      const cleanedValues = {
+        ...values,
+        barcode: values.barcode || null,
+        supplierId: values.supplierId || null,
+        imageUrl: values.imageUrl || null,
+      };
+
       if (productId) {
-        await updateProduct.mutateAsync({ id: productId, ...values });
+        await updateProduct.mutateAsync({ id: productId, ...cleanedValues });
         toast({
           title: "Product Updated",
           description: "Product has been updated successfully.",
         });
       } else {
-        await createProduct.mutateAsync(values);
+        await createProduct.mutateAsync(cleanedValues);
         toast({
           title: "Product Created",
           description: "New product has been created successfully.",
@@ -84,6 +92,7 @@ export function ProductForm({ productId, onSaved, onCancel }: ProductFormProps) 
       }
       onSaved();
     } catch (error) {
+      console.log("Product form submission error:", error);
       toast({
         title: "Error",
         description: `Failed to ${productId ? "update" : "create"} product. Please try again.`,

@@ -290,10 +290,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/products", authenticateToken, requireRole(['admin', 'manager']), async (req, res) => {
     try {
+      console.log("Product creation request body:", req.body);
       const productData = insertProductSchema.parse(req.body);
+      console.log("Parsed product data:", productData);
       const product = await storage.createProduct(productData);
       res.status(201).json(product);
     } catch (error) {
+      console.log("Product creation error:", error);
       res.status(400).json({ message: "Failed to create product", error: error.message });
     }
   });
