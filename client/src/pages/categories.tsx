@@ -35,6 +35,8 @@ export default function Categories() {
 
   const onSubmit = async (values: InsertCategory) => {
     try {
+      console.log("Submitting category data:", values);
+      
       if (editingCategory) {
         await updateCategory.mutateAsync({ id: editingCategory.id, ...values });
         toast({
@@ -42,7 +44,8 @@ export default function Categories() {
           description: "Category has been updated successfully.",
         });
       } else {
-        await createCategory.mutateAsync(values);
+        const result = await createCategory.mutateAsync(values);
+        console.log("Category creation result:", result);
         toast({
           title: "Category Added",
           description: "New category has been added successfully.",
@@ -54,9 +57,10 @@ export default function Categories() {
       setEditingCategory(null);
       refetch();
     } catch (error) {
+      console.error("Category submission error:", error);
       toast({
         title: "Error",
-        description: `Failed to ${editingCategory ? "update" : "add"} category. Please try again.`,
+        description: error?.response?.data?.message || error?.message || `Failed to ${editingCategory ? "update" : "add"} category. Please try again.`,
         variant: "destructive",
       });
     }

@@ -37,10 +37,10 @@ export function useProducts(filters?: {
   const cleanFilters = filters ? Object.fromEntries(
     Object.entries(filters).filter(([_, value]) => value !== undefined && value !== "")
   ) : {};
-  
+
   const params = new URLSearchParams(cleanFilters);
   const queryString = params.toString();
-  
+
   return useQuery<ProductWithDetails[]>({
     queryKey: ["/api/products", queryString],
   });
@@ -68,7 +68,7 @@ export function useLowStockProducts() {
 
 export function useCreateProduct() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (product: InsertProduct): Promise<Product> => {
       const response = await apiRequest("POST", "/api/products", product);
@@ -82,7 +82,7 @@ export function useCreateProduct() {
 
 export function useUpdateProduct() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ id, ...product }: Partial<InsertProduct> & { id: string }): Promise<Product> => {
       const response = await apiRequest("PUT", `/api/products/${id}`, product);
@@ -96,7 +96,7 @@ export function useUpdateProduct() {
 
 export function useDeleteProduct() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (id: string): Promise<void> => {
       await apiRequest("DELETE", `/api/products/${id}`);
@@ -109,7 +109,7 @@ export function useDeleteProduct() {
 
 export function useAdjustStock() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ id, quantity, reason }: { id: string; quantity: number; reason?: string }): Promise<void> => {
       await apiRequest("POST", `/api/products/${id}/adjust-stock`, { quantity, reason });
@@ -127,23 +127,42 @@ export function useCategories() {
   });
 }
 
-export function useCreateCategory() {
+export const useCreateCategory = () => {
   const queryClient = useQueryClient();
-  
   return useMutation({
-    mutationFn: async (category: InsertCategory): Promise<Category> => {
-      const response = await apiRequest("POST", "/api/categories", category);
-      return response.json();
+    mutationFn: async (categoryData: InsertCategory) => {
+      console.log("API: Creating category with data:", categoryData);
+
+      const response = await fetch('/api/categories', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getAuthToken()}`
+        },
+        body: JSON.stringify(categoryData),
+      });
+
+      const responseData = await response.json();
+      console.log("API: Category creation response:", responseData);
+
+      if (!response.ok) {
+        throw new Error(responseData.message || 'Failed to create category');
+      }
+
+      return responseData;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+    },
+    onError: (error) => {
+      console.error("API: Category creation failed:", error);
     },
   });
-}
+};
 
 export function useUpdateCategory() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ id, ...category }: { id: string } & Partial<InsertCategory>): Promise<Category> => {
       const response = await apiRequest("PUT", `/api/categories/${id}`, category);
@@ -157,7 +176,7 @@ export function useUpdateCategory() {
 
 export function useDeleteCategory() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (id: string): Promise<void> => {
       await apiRequest("DELETE", `/api/categories/${id}`);
@@ -177,7 +196,7 @@ export function useSuppliers() {
 
 export function useCreateSupplier() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (supplier: InsertSupplier): Promise<Supplier> => {
       const response = await apiRequest("POST", "/api/suppliers", supplier);
@@ -191,7 +210,7 @@ export function useCreateSupplier() {
 
 export function useUpdateSupplier() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ id, ...supplier }: { id: string } & Partial<InsertSupplier>): Promise<Supplier> => {
       const response = await apiRequest("PUT", `/api/suppliers/${id}`, supplier);
@@ -205,7 +224,7 @@ export function useUpdateSupplier() {
 
 export function useDeleteSupplier() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (id: string): Promise<void> => {
       await apiRequest("DELETE", `/api/suppliers/${id}`);
@@ -227,7 +246,7 @@ export function useCustomers(search?: string) {
 
 export function useCreateCustomer() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (customer: InsertCustomer): Promise<Customer> => {
       const response = await apiRequest("POST", "/api/customers", customer);
@@ -248,7 +267,7 @@ export function useSales(filters?: {
   const cleanFilters = filters ? Object.fromEntries(
     Object.entries(filters).filter(([_, value]) => value !== undefined && value !== "")
   ) : {};
-  
+
   const params = new URLSearchParams(cleanFilters);
   const queryString = params.toString();
   return useQuery<SaleWithDetails[]>({
@@ -258,7 +277,7 @@ export function useSales(filters?: {
 
 export function useCreateSale() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (data: {
       sale: Omit<InsertSale, 'invoiceNumber' | 'userId'>;

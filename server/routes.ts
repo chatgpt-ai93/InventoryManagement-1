@@ -147,11 +147,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/categories", authenticateToken, requireRole(['admin', 'manager']), async (req, res) => {
     try {
+      console.log("Category creation request body:", req.body);
       const categoryData = insertCategorySchema.parse(req.body);
+      console.log("Parsed category data:", categoryData);
       const category = await storage.createCategory(categoryData);
+      console.log("Created category:", category);
       res.status(201).json(category);
     } catch (error) {
-      res.status(400).json({ message: "Failed to create category", error: error.message });
+      console.error("Category creation error:", error);
+      if (error.issues) {
+        console.error("Validation errors:", error.issues);
+      }
+      res.status(400).json({ 
+        message: "Failed to create category", 
+        error: error.message,
+        details: error.issues || null 
+      });
     }
   });
 
