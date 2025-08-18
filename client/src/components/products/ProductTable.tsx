@@ -210,7 +210,12 @@ export function ProductTable({ products, isLoading, onEdit, onRefresh }: Product
                     </td>
                     <td className="p-4 text-foreground">{product.sku}</td>
                     <td className="p-4 text-muted-foreground">{product.category?.name || "—"}</td>
-                    <td className="p-4 text-foreground">{formatCurrency(product.sellingPrice)}</td>
+                    <td className="p-4 text-foreground">
+                      <CurrencyDisplay 
+                        amount={product.sellingPrice} 
+                        currency={product.currency as CurrencyCode} 
+                      />
+                    </td>
                     <td className="p-4">
                       <span className={`font-medium ${
                         stockStatus.variant === "destructive" ? "text-destructive" :
