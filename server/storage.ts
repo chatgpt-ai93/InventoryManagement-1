@@ -10,8 +10,9 @@ import {
   type Return, type InsertReturn,
   type PurchaseOrder, type InsertPurchaseOrder,
   type PurchaseOrderItem, type InsertPurchaseOrderItem,
+  type SystemSettings, type InsertSystemSettings,
   type DashboardMetrics,
-  users, categories, suppliers, products, customers, sales, saleItems, stockMovements, returns, purchaseOrders, purchaseOrderItems
+  users, categories, suppliers, products, customers, sales, saleItems, stockMovements, returns, purchaseOrders, purchaseOrderItems, systemSettings
 } from "@shared/schema";
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
@@ -90,6 +91,10 @@ export interface IStorage {
   getPurchaseOrder(id: string): Promise<PurchaseOrder | undefined>;
   getAllPurchaseOrders(): Promise<PurchaseOrder[]>;
   receivePurchaseOrder(id: string, userId: string): Promise<boolean>;
+
+  // System Settings methods
+  getSystemSettings(): Promise<SystemSettings | undefined>;
+  updateSystemSettings(settings: Partial<InsertSystemSettings>): Promise<SystemSettings>;
 
   // Dashboard methods
   getDashboardMetrics(): Promise<DashboardMetrics>;
@@ -643,6 +648,33 @@ export class DatabaseStorage implements IStorage {
   async getSalesData(days: number): Promise<Array<{ date: string; sales: number; transactions: number }>> {
     // This would require date aggregation - for now return empty array
     return [];
+  }
+
+  // System Settings methods
+  async getSystemSettings(): Promise<SystemSettings | undefined> {
+    const result = await db.select().from(systemSettings).limit(1);
+    return result[0];
+  }
+
+  async updateSystemSettings(settings: Partial<InsertSystemSettings>): Promise<SystemSettings> {
+    // Get existing settings or create default if none exist
+    const existing = await this.getSystemSettings();
+    
+    if (existing) {
+      const result = await db.update(systemSettings)
+        .set({ ...settings, updatedAt: new Date() })
+        .where(eq(systemSettings.id, existing.id))
+        .returning();
+      return result[0];
+    } else {
+      // Create new settings
+      const result = await db.insert(systemSettings).values({
+        currency: "INR",
+        taxRate: "0",
+        ...settings,
+      }).returning();
+      return result[0];
+    }
   }
 }
 

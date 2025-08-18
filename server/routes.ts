@@ -9,6 +9,7 @@ import {
   insertProductSchema, insertCustomerSchema, insertSaleSchema,
   insertSaleItemSchema, insertStockMovementSchema, insertReturnSchema,
   insertPurchaseOrderSchema, insertPurchaseOrderItemSchema,
+  insertSystemSettingsSchema,
   type User, type CartItem
 } from "@shared/schema";
 
@@ -575,6 +576,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Purchase order received successfully" });
     } catch (error) {
       res.status(500).json({ message: "Failed to receive purchase order" });
+    }
+  });
+
+  // System Settings routes
+  app.get("/api/settings", authenticateToken, requireRole(['admin']), async (req, res) => {
+    try {
+      const settings = await storage.getSystemSettings();
+      if (!settings) {
+        // Return default settings if none exist
+        return res.json({
+          currency: "INR",
+          taxRate: "0",
+          companyName: null,
+          companyAddress: null,
+          companyPhone: null,
+          companyEmail: null,
+        });
+      }
+      res.json(settings);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get system settings" });
+    }
+  });
+
+  app.put("/api/settings", authenticateToken, requireRole(['admin']), async (req, res) => {
+    try {
+      const settingsData = insertSystemSettingsSchema.partial().parse(req.body);
+      const settings = await storage.updateSystemSettings(settingsData);
+      res.json(settings);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to update system settings", error: error.message });
     }
   });
 

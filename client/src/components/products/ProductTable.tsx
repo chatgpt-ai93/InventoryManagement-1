@@ -2,10 +2,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { CurrencyDisplay } from "@/components/ui/currency-display";
 import { useDeleteProduct } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { Package, Edit, Eye, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
-import type { ProductWithDetails } from "@shared/schema";
+import type { ProductWithDetails, CurrencyCode } from "@shared/schema";
 
 interface ProductTableProps {
   products: ProductWithDetails[];
@@ -22,12 +23,7 @@ export function ProductTable({ products, isLoading, onEdit, onRefresh }: Product
   const deleteProduct = useDeleteProduct();
   const { toast } = useToast();
 
-  const formatCurrency = (amount: string) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(parseFloat(amount));
-  };
+  // Remove old formatCurrency function since we'll use CurrencyDisplay component
 
   const getStockStatus = (product: ProductWithDetails) => {
     if (!product.trackStock) return { label: "Not Tracked", variant: "secondary" as const };

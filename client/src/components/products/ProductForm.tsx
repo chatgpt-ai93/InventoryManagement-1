@@ -9,8 +9,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useProduct, useCreateProduct, useUpdateProduct, useCategories, useSuppliers } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
-import { insertProductSchema } from "@shared/schema";
-import type { InsertProduct } from "@shared/schema";
+import { insertProductSchema, supportedCurrencies, defaultCurrency } from "@shared/schema";
+import type { InsertProduct, CurrencyCode } from "@shared/schema";
 
 interface ProductFormProps {
   productId?: string | null;
@@ -38,6 +38,7 @@ export function ProductForm({ productId, onSaved, onCancel }: ProductFormProps) 
       supplierId: "",
       costPrice: "0",
       sellingPrice: "0",
+      currency: defaultCurrency,
       quantity: 0,
       minStockLevel: 10,
       trackStock: true,
@@ -58,6 +59,7 @@ export function ProductForm({ productId, onSaved, onCancel }: ProductFormProps) 
         supplierId: product.supplierId || "",
         costPrice: product.costPrice || "0",
         sellingPrice: product.sellingPrice || "0",
+        currency: product.currency || defaultCurrency,
         quantity: product.quantity || 0,
         minStockLevel: product.minStockLevel || 10,
         trackStock: product.trackStock ?? true,
@@ -222,7 +224,7 @@ export function ProductForm({ productId, onSaved, onCancel }: ProductFormProps) 
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           <FormField
             control={form.control}
             name="costPrice"
@@ -260,6 +262,31 @@ export function ProductForm({ productId, onSaved, onCancel }: ProductFormProps) 
                     data-testid="input-product-selling-price"
                   />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="currency"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Currency</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value || defaultCurrency}>
+                  <FormControl>
+                    <SelectTrigger data-testid="select-product-currency">
+                      <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {Object.entries(supportedCurrencies).map(([code, currency]) => (
+                      <SelectItem key={code} value={code}>
+                        {currency.symbol} {currency.name} ({code})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}

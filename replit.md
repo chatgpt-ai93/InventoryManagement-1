@@ -85,6 +85,12 @@ Preferred communication style: Simple, everyday language.
 - **Drizzle Kit**: Database schema management and migrations
 - **ESBuild**: Fast JavaScript bundler for production builds
 
+### Currency Support
+- **Multi-Currency System**: Supports 7 major currencies (INR, USD, EUR, GBP, JPY, AUD, CAD)
+- **Default Currency**: Indian Rupee (INR) with proper number formatting (₹1,23,456.78)
+- **Currency Configuration**: Per-product currency selection with system-wide default settings
+- **Localized Formatting**: Currency-specific number formatting (Indian vs Western formats)
+
 ### Optional Integrations
 - **Replit**: Development environment integration with error overlays and cartographer
 - **Barcode Scanner API**: Browser-based barcode scanning for POS operations

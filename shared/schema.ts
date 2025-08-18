@@ -3,6 +3,20 @@ import { pgTable, text, varchar, decimal, integer, timestamp, boolean, uuid } fr
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// Currency configuration
+export const supportedCurrencies = {
+  INR: { symbol: "₹", name: "Indian Rupee", code: "INR" },
+  USD: { symbol: "$", name: "US Dollar", code: "USD" },
+  EUR: { symbol: "€", name: "Euro", code: "EUR" },
+  GBP: { symbol: "£", name: "British Pound", code: "GBP" },
+  JPY: { symbol: "¥", name: "Japanese Yen", code: "JPY" },
+  AUD: { symbol: "A$", name: "Australian Dollar", code: "AUD" },
+  CAD: { symbol: "C$", name: "Canadian Dollar", code: "CAD" },
+} as const;
+
+export type CurrencyCode = keyof typeof supportedCurrencies;
+export const defaultCurrency: CurrencyCode = "INR";
+
 // Users table
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -37,6 +51,18 @@ export const suppliers = pgTable("suppliers", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// System Settings table
+export const systemSettings = pgTable("system_settings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  currency: text("currency").notNull().default("INR"),
+  taxRate: decimal("tax_rate", { precision: 5, scale: 2 }).notNull().default("0"),
+  companyName: text("company_name"),
+  companyAddress: text("company_address"),
+  companyPhone: text("company_phone"),
+  companyEmail: text("company_email"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Products table
 export const products = pgTable("products", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -48,6 +74,7 @@ export const products = pgTable("products", {
   supplierId: varchar("supplier_id").references(() => suppliers.id),
   costPrice: decimal("cost_price", { precision: 10, scale: 2 }).notNull(),
   sellingPrice: decimal("selling_price", { precision: 10, scale: 2 }).notNull(),
+  currency: text("currency").notNull().default("INR"),
   quantity: integer("quantity").notNull().default(0),
   minStockLevel: integer("min_stock_level").notNull().default(10),
   trackStock: boolean("track_stock").notNull().default(true),
@@ -80,6 +107,7 @@ export const sales = pgTable("sales", {
   taxAmount: decimal("tax_amount", { precision: 10, scale: 2 }).notNull().default("0"),
   discountAmount: decimal("discount_amount", { precision: 10, scale: 2 }).notNull().default("0"),
   total: decimal("total", { precision: 10, scale: 2 }).notNull(),
+  currency: text("currency").notNull().default("INR"),
   paymentMethod: text("payment_method").notNull(), // cash, card, transfer
   status: text("status").notNull().default("completed"), // completed, refunded, partial_refund
   createdAt: timestamp("created_at").defaultNow(),
@@ -197,6 +225,11 @@ export const insertPurchaseOrderItemSchema = createInsertSchema(purchaseOrderIte
   id: true,
 });
 
+export const insertSystemSettingsSchema = createInsertSchema(systemSettings).omit({
+  id: true,
+  updatedAt: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -220,6 +253,8 @@ export type PurchaseOrder = typeof purchaseOrders.$inferSelect;
 export type InsertPurchaseOrder = z.infer<typeof insertPurchaseOrderSchema>;
 export type PurchaseOrderItem = typeof purchaseOrderItems.$inferSelect;
 export type InsertPurchaseOrderItem = z.infer<typeof insertPurchaseOrderItemSchema>;
+export type SystemSettings = typeof systemSettings.$inferSelect;
+export type InsertSystemSettings = z.infer<typeof insertSystemSettingsSchema>;
 
 // Extended types for UI
 export type ProductWithDetails = Product & {
@@ -252,3 +287,31 @@ export type CartItem = {
   unitPrice: number;
   totalPrice: number;
 };
+
+// Currency utility functions
+export function formatCurrency(amount: number | string, currencyCode: CurrencyCode = defaultCurrency): string {
+  const currency = supportedCurrencies[currencyCode];
+  const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+  
+  // For INR, use Indian number formatting
+  if (currencyCode === 'INR') {
+    return `${currency.symbol}${numAmount.toLocaleString('en-IN', { 
+      minimumFractionDigits: 2, 
+      maximumFractionDigits: 2 
+    })}`;
+  }
+  
+  // For other currencies, use standard formatting
+  return `${currency.symbol}${numAmount.toLocaleString('en-US', { 
+    minimumFractionDigits: 2, 
+    maximumFractionDigits: 2 
+  })}`;
+}
+
+export function getCurrencySymbol(currencyCode: CurrencyCode = defaultCurrency): string {
+  return supportedCurrencies[currencyCode].symbol;
+}
+
+export function getCurrencyName(currencyCode: CurrencyCode = defaultCurrency): string {
+  return supportedCurrencies[currencyCode].name;
+}
