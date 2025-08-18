@@ -145,23 +145,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/categories", authenticateToken, requireRole(['admin', 'manager']), async (req, res) => {
+  app.post("/api/categories", authenticateToken, async (req, res) => {
     try {
       console.log("Category creation request body:", req.body);
+      
+      // Validate required fields
+      if (!req.body.name || !req.body.slug) {
+        return res.status(400).json({ 
+          message: "Name and slug are required fields"
+        });
+      }
+      
       const categoryData = insertCategorySchema.parse(req.body);
       console.log("Parsed category data:", categoryData);
+      
       const category = await storage.createCategory(categoryData);
       console.log("Created category:", category);
+      
       res.status(201).json(category);
     } catch (error) {
       console.error("Category creation error:", error);
+      
       if (error.issues) {
         console.error("Validation errors:", error.issues);
+        return res.status(400).json({ 
+          message: "Validation failed", 
+          error: error.message,
+          details: error.issues
+        });
       }
-      res.status(400).json({ 
+      
+      if (error.message && error.message.includes('UNIQUE constraint failed')) {
+        return res.status(409).json({ 
+          message: "Category with this name or slug already exists"
+        });
+      }
+      
+      res.status(500).json({ 
         message: "Failed to create category", 
-        error: error.message,
-        details: error.issues || null 
+        error: error.message
       });
     }
   });
@@ -462,7 +484,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       console.log("Parsed sale data:", saleData);
       
-      const saleItems = items.map((item: any) => insertSaleItemSchema.omit({ saleId: true }).parse(item));
+      const saleItems = items.map((item: any) => insertSaleItemSchema.parse(item));
       console.log("Parsed sale items:", saleItems);
       
       const createdSale = await storage.createSale(saleData, saleItems);

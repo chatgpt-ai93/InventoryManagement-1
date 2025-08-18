@@ -37,6 +37,16 @@ export default function Categories() {
     try {
       console.log("Submitting category data:", values);
       
+      // Validate required fields on frontend
+      if (!values.name || !values.slug) {
+        toast({
+          title: "Validation Error",
+          description: "Name and slug are required fields.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       if (editingCategory) {
         await updateCategory.mutateAsync({ id: editingCategory.id, ...values });
         toast({
@@ -58,9 +68,21 @@ export default function Categories() {
       refetch();
     } catch (error) {
       console.error("Category submission error:", error);
+      console.error("Error details:", error);
+      
+      let errorMessage = `Failed to ${editingCategory ? "update" : "add"} category. Please try again.`;
+      
+      if (error?.message) {
+        errorMessage = error.message;
+      } else if (error?.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error?.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      }
+      
       toast({
         title: "Error",
-        description: error?.response?.data?.message || error?.message || `Failed to ${editingCategory ? "update" : "add"} category. Please try again.`,
+        description: errorMessage,
         variant: "destructive",
       });
     }
