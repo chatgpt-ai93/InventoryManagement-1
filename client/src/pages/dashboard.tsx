@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useDashboardMetrics, useTopProducts, useLowStockProducts } from "@/lib/api";
 import { SalesChart } from "@/components/charts/SalesChart";
+import { formatCurrency } from "@shared/schema";
 import {
   DollarSign,
   ShoppingCart,
@@ -40,12 +41,7 @@ export default function Dashboard() {
     );
   }
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
+  // Use shared formatCurrency function for proper Indian Rupee formatting
 
   const formatPercentage = (percentage: number | undefined) => {
     if (!percentage && percentage !== 0) return '+0.0%';

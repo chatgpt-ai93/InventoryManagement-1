@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useCreateSale } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { Trash2, Plus, Minus, ShoppingCart, CreditCard, Banknote, University, Pause, Printer, Check } from "lucide-react";
+import { formatCurrency } from "@shared/schema";
 import type { CartItem, Customer } from "@shared/schema";
 
 interface CartProps {
@@ -40,12 +41,7 @@ export function Cart({
   const createSale = useCreateSale();
   const { toast } = useToast();
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
+  // Use shared formatCurrency function for proper Indian Rupee formatting
 
   const handleCompleteSale = async () => {
     if (items.length === 0) {

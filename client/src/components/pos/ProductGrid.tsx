@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Package } from "lucide-react";
-import type { ProductWithDetails } from "@shared/schema";
+import { formatCurrency } from "@shared/schema";
+import type { ProductWithDetails, CurrencyCode } from "@shared/schema";
 
 interface ProductGridProps {
   products: ProductWithDetails[];
@@ -9,12 +10,7 @@ interface ProductGridProps {
 }
 
 export function ProductGrid({ products, onAddToCart, isLoading }: ProductGridProps) {
-  const formatCurrency = (amount: string) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(parseFloat(amount));
-  };
+  // Use shared formatCurrency function for proper currency formatting
 
   const getStockStatus = (product: ProductWithDetails) => {
     if (!product.trackStock) return null;
@@ -85,7 +81,7 @@ export function ProductGrid({ products, onAddToCart, isLoading }: ProductGridPro
               
               <div className="flex items-center justify-between">
                 <p className="text-lg font-bold text-primary">
-                  {formatCurrency(product.sellingPrice)}
+                  {formatCurrency(product.sellingPrice, product.currency as CurrencyCode)}
                 </p>
                 {stockStatus && (
                   <Badge 
