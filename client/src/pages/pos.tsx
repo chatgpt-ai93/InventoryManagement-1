@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProductGrid } from "@/components/pos/ProductGrid";
 import { Cart } from "@/components/pos/Cart";
-import { useProducts, useCustomers } from "@/lib/api";
+import { useProducts, useCustomers, useCategories } from "@/lib/api";
 import { Search, Scan, ShoppingCart } from "lucide-react";
 import type { CartItem } from "@shared/schema";
 
@@ -18,15 +18,16 @@ export default function POS() {
 
   const { data: products = [], isLoading: productsLoading } = useProducts({
     search: searchQuery || undefined,
+    category: selectedCategory !== "all" ? selectedCategory : undefined,
   });
 
   const { data: customers = [] } = useCustomers();
+  const { data: categoriesData = [] } = useCategories();
 
+  // Build categories list with "All" option plus real categories from database
   const categories = [
     { id: "all", name: "All" },
-    { id: "electronics", name: "Electronics" },
-    { id: "accessories", name: "Accessories" },
-    { id: "office-supplies", name: "Office" },
+    ...categoriesData.map(cat => ({ id: cat.id, name: cat.name }))
   ];
 
   const addToCart = (productId: string) => {
