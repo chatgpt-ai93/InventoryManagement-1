@@ -66,7 +66,7 @@ export default function Categories() {
       setIsAddDialogOpen(false);
       setEditingCategory(null);
       refetch();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Category submission error:", error);
       console.error("Error details:", error);
       
@@ -161,9 +161,17 @@ export default function Categories() {
             {categories.length} categories
           </Badge>
         </div>
-        <Dialog open={isAddDialogOpen} onOpenChange={handleDialogClose}>
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
-            <Button data-testid="button-add-category">
+            <Button 
+              data-testid="button-add-category"
+              onClick={() => {
+                console.log("Add Category button clicked");
+                setEditingCategory(null);
+                form.reset();
+                setIsAddDialogOpen(true);
+              }}
+            >
               <Plus className="mr-2 h-4 w-4" />
               Add Category
             </Button>
@@ -223,6 +231,7 @@ export default function Categories() {
                           placeholder="Enter category description"
                           className="resize-none"
                           {...field}
+                          value={field.value || ""}
                           data-testid="textarea-category-description"
                         />
                       </FormControl>
