@@ -127,38 +127,19 @@ export function useCategories() {
   });
 }
 
-export const useCreateCategory = () => {
+export function useCreateCategory() {
   const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: async (categoryData: InsertCategory) => {
-      console.log("API: Creating category with data:", categoryData);
-
-      const response = await fetch('/api/categories', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${getAuthToken()}`
-        },
-        body: JSON.stringify(categoryData),
-      });
-
-      const responseData = await response.json();
-      console.log("API: Category creation response:", responseData);
-
-      if (!response.ok) {
-        throw new Error(responseData.message || 'Failed to create category');
-      }
-
-      return responseData;
+    mutationFn: async (category: InsertCategory): Promise<Category> => {
+      const response = await apiRequest("POST", "/api/categories", category);
+      return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
-    },
-    onError: (error) => {
-      console.error("API: Category creation failed:", error);
+      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
     },
   });
-};
+}
 
 export function useUpdateCategory() {
   const queryClient = useQueryClient();
